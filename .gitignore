@@ -1,3 +1,5 @@
 # LLM dir
 .claude
 Docs
+
+node_modules
