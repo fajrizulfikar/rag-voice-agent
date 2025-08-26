@@ -11,15 +11,24 @@ import { VoiceButton } from "@/components/voice-button"
 import type { Message } from "@/types"
 import { Send, Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
+import { apiClient } from "@/lib/api-client"
 
-// Mock API functions
+// Mock API functions (will be replaced with real API calls in Stage 2)
 const mockSendMessage = async (content: string): Promise<Message> => {
+  try {
+    // Test backend connectivity
+    const healthCheck = await apiClient.healthCheck();
+    console.log('Backend health:', healthCheck.data);
+  } catch (error) {
+    console.warn('Backend not available, using mock response:', error);
+  }
+
   // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 1000))
 
   return {
     id: Date.now().toString(),
-    content: `This is a mock response to: "${content}". In a real implementation, this would be processed by your RAG system and return relevant information from your knowledge base.`,
+    content: `This is a mock response to: "${content}". Backend connectivity has been tested. In Stage 2, this will be processed by the RAG system and return relevant information from your knowledge base.`,
     role: "assistant",
     timestamp: new Date(),
     audioUrl: "/placeholder-audio.mp3", // Mock audio URL
@@ -111,7 +120,7 @@ export default function ChatPage() {
                 <CardContent className="p-6 text-center">
                   <h2 className="text-lg font-medium mb-2">Welcome to your FAQ Assistant</h2>
                   <p className="text-muted-foreground text-sm">
-                    Ask me anything using voice or text. I'll help you find the information you need.
+                    Ask me anything using voice or text. I&apos;ll help you find the information you need.
                   </p>
                 </CardContent>
               </Card>
