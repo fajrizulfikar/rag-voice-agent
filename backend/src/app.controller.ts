@@ -11,7 +11,7 @@ export class AppController {
   }
 
   @Get('health')
-  getHealth(): object {
-    return this.appService.getHealth();
+  async getHealth(): Promise<object> {
+    return await this.appService.getHealth();
   }
 }

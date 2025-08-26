@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import configurations from './config';
+import { Document, QueryLog } from './entities';
 
 @Module({
   imports: [
@@ -10,7 +13,27 @@ import { AppService } from './app.service';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+      load: configurations,
     }),
+    
+    // TypeORM Database configuration
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('database.host'),
+        port: configService.get('database.port'),
+        username: configService.get('database.username'),
+        password: configService.get('database.password'),
+        database: configService.get('database.database'),
+        entities: [Document, QueryLog],
+        synchronize: configService.get('database.synchronize'),
+        logging: configService.get('database.logging'),
+        ssl: configService.get('database.ssl'),
+      }),
+      inject: [ConfigService],
+    }),
+    
     // Rate limiting protection
     ThrottlerModule.forRoot([
       {
