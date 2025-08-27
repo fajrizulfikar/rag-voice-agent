@@ -1,5 +1,6 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { DocumentsService } from '../documents';
+import { CreateDocumentDto } from '../documents/dto';
 import { RagService, VectorService, EmbeddingService } from '../rag';
 import { UploadDocumentDto, ReindexDto } from './dto';
 import * as fs from 'fs';
@@ -16,14 +17,17 @@ export class AdminService {
     private readonly embeddingService: EmbeddingService,
   ) {}
 
-  async uploadDocument(file: Express.Multer.File, uploadDocumentDto: UploadDocumentDto) {
+  async uploadDocument(
+    file: Express.Multer.File,
+    uploadDocumentDto: UploadDocumentDto,
+  ) {
     this.logger.log(`Uploading document: ${file.originalname}`);
-    
+
     // Extract text content based on file type
     const content = await this.extractTextContent(file);
-    
-    // Create document in database
-    const document = await this.documentsService.create({
+
+    // Create document in database - ensure proper CreateDocumentDto structure
+    const createDocumentDto: CreateDocumentDto = {
       title: uploadDocumentDto.title || file.originalname,
       content,
       category: uploadDocumentDto.category,
@@ -35,7 +39,8 @@ export class AdminService {
         size: file.size,
         uploadedAt: new Date().toISOString(),
       }),
-    });
+    };
+    const document = await this.documentsService.create(createDocumentDto);
 
     // Generate embedding and store in vector database (placeholder for now)
     const embedding = await this.embeddingService.generateEmbedding(content);
@@ -54,16 +59,29 @@ export class AdminService {
 
   async uploadTextDocument(uploadDocumentDto: UploadDocumentDto) {
     this.logger.log(`Creating text document: ${uploadDocumentDto.title}`);
-    
+
     if (!uploadDocumentDto.content) {
       throw new BadRequestException('Content is required for text documents');
     }
 
-    // Create document in database
-    const document = await this.documentsService.create(uploadDocumentDto);
+    if (!uploadDocumentDto.title) {
+      throw new BadRequestException('Title is required for text documents');
+    }
+
+    // Create document in database - transform UploadDocumentDto to CreateDocumentDto
+    const createDocumentDto: CreateDocumentDto = {
+      title: uploadDocumentDto.title,
+      content: uploadDocumentDto.content,
+      category: uploadDocumentDto.category,
+      tags: uploadDocumentDto.tags,
+      sourceUrl: uploadDocumentDto.sourceUrl,
+    };
+    const document = await this.documentsService.create(createDocumentDto);
 
     // Generate embedding and store in vector database
-    const embedding = await this.embeddingService.generateEmbedding(uploadDocumentDto.content);
+    const embedding = await this.embeddingService.generateEmbedding(
+      uploadDocumentDto.content,
+    );
     await this.vectorService.storeDocument(document.id, embedding, {
       title: document.title,
       category: document.category,
@@ -88,7 +106,7 @@ export class AdminService {
   async deleteDocument(id: string) {
     // Remove from vector database
     await this.vectorService.deleteDocument(id);
-    
+
     // Remove from main database
     await this.documentsService.remove(id);
 
@@ -108,16 +126,18 @@ export class AdminService {
 
   async reindexVectorDatabase(reindexDto: ReindexDto) {
     this.logger.log('Starting vector database reindexing');
-    
+
     try {
       if (reindexDto.fullReindex) {
         // Full reindex of all documents
         await this.vectorService.reindexAllDocuments();
-      } else if (reindexDto.documentIds?.length > 0) {
+      } else if (reindexDto.documentIds && reindexDto.documentIds.length > 0) {
         // Reindex specific documents
         for (const documentId of reindexDto.documentIds) {
           const document = await this.documentsService.findOne(documentId);
-          const embedding = await this.embeddingService.generateEmbedding(document.content);
+          const embedding = await this.embeddingService.generateEmbedding(
+            document.content,
+          );
           await this.vectorService.updateDocument(documentId, embedding, {
             title: document.title,
             category: document.category,
@@ -140,7 +160,7 @@ export class AdminService {
   async getSystemHealth() {
     const databaseHealth = true; // This will be implemented with actual health checks
     const vectorDatabaseHealth = await this.vectorService.healthCheck();
-    
+
     return {
       status: databaseHealth && vectorDatabaseHealth ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),
@@ -154,7 +174,7 @@ export class AdminService {
   async getSystemStats() {
     const documents = await this.documentsService.findAll();
     const queryLogs = await this.ragService.getQueryLogs();
-    
+
     return {
       totalDocuments: documents.length,
       totalQueries: queryLogs.length,
@@ -171,23 +191,23 @@ export class AdminService {
     // - mammoth for DOCX files
     // - xlsx for Excel files
     // - etc.
-    
+
     if (file.mimetype.startsWith('text/')) {
       return file.buffer.toString('utf-8');
     }
-    
+
     // For non-text files, return a placeholder
     return `Content extracted from ${file.originalname} (${file.mimetype}). This is a placeholder - actual text extraction will be implemented in Stage 2.`;
   }
 
   private groupDocumentsByCategory(documents: any[]): Record<string, number> {
     const grouped: Record<string, number> = {};
-    
-    documents.forEach(doc => {
+
+    documents.forEach((doc) => {
       const category = doc.category || 'Uncategorized';
       grouped[category] = (grouped[category] || 0) + 1;
     });
-    
+
     return grouped;
   }
 }
