@@ -17,14 +17,14 @@ export const configurationSchema = Joi.object({
 
   // Vector Database (Qdrant)
   QDRANT_URL: Joi.string().uri().required(),
-  QDRANT_API_KEY: Joi.string().optional(),
+  QDRANT_API_KEY: Joi.string().allow('').optional(),
   QDRANT_COLLECTION_NAME: Joi.string().default('faq_documents'),
 
   // Redis
   REDIS_URL: Joi.string().uri().optional(),
   REDIS_HOST: Joi.string().default('localhost'),
   REDIS_PORT: Joi.number().port().default(6379),
-  REDIS_PASSWORD: Joi.string().optional(),
+  REDIS_PASSWORD: Joi.string().allow('').optional(),
 
   // Security
   JWT_SECRET: Joi.string().min(32).required(),
