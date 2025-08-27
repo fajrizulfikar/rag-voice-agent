@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { QueryLog } from '../entities';
+import { QueryLog, QueryType } from '../entities';
 import { VectorService } from './vector.service';
 import { EmbeddingService } from './embedding.service';
 import { TextQueryDto, VoiceQueryDto, QueryResponse } from './dto';
@@ -21,8 +21,8 @@ export class RagService {
     // Log the query
     const queryLog = await this.logQuery({
       query,
-      userId,
-      queryType: 'text',
+      sessionId: userId,
+      queryType: QueryType.TEXT,
     });
 
     try {
@@ -39,8 +39,8 @@ export class RagService {
 
       // Update query log with results
       await this.updateQueryLog(queryLog.id, {
-        answer,
-        documentsFound: similarDocuments.length,
+        response: answer,
+        documentsRetrieved: similarDocuments.length,
         responseTime: Date.now() - queryLog.createdAt.getTime(),
       });
 
@@ -52,7 +52,7 @@ export class RagService {
     } catch (error) {
       // Update query log with error
       await this.updateQueryLog(queryLog.id, {
-        error: error.message,
+        errorMessage: error.message,
         responseTime: Date.now() - queryLog.createdAt.getTime(),
       });
 
