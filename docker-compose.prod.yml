@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   # PostgreSQL Database
@@ -32,10 +31,11 @@ services:
       QDRANT__SERVICE__GRPC_PORT: 6334
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      test: ["CMD", "timeout", "5", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/6333"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
     networks:
       - rag-network
 
