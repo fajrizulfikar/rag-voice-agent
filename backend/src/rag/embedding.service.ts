@@ -8,10 +8,10 @@ export class EmbeddingService {
   private embeddingModel: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.openaiApiKey = this.configService.get<string>('openai.apiKey');
-    this.embeddingModel = this.configService.get<string>(
-      'openai.embeddingModel',
-    );
+    this.openaiApiKey = this.configService.get<string>('openai.apiKey') || '';
+    this.embeddingModel =
+      this.configService.get<string>('openai.embeddingModel') ||
+      'text-embedding-ada-002';
   }
 
   async generateEmbedding(text: string): Promise<number[]> {
