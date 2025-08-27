@@ -45,6 +45,8 @@ export const googleCloudConfig = registerAs('googleCloud', () => ({
 }));
 
 export { databaseConfig };
+export * from './configuration.service';
+export * from './configuration.schema';
 
 export default [
   appConfig,

@@ -6,6 +6,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import configurations from './config';
 import { Document, QueryLog } from './entities';
+import { CommonModule } from './common';
+import { DocumentsModule } from './documents';
+import { RagModule } from './rag';
+import { AdminModule } from './admin';
 
 @Module({
   imports: [
@@ -41,6 +45,12 @@ import { Document, QueryLog } from './entities';
         limit: 100, // 100 requests per minute
       },
     ]),
+
+    // Feature modules
+    CommonModule,
+    DocumentsModule,
+    RagModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
