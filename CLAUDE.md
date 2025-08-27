@@ -98,7 +98,7 @@ npm run lint           # Next.js ESLint
 ### Planned Features (from PRD)
 - Vector database integration (Qdrant, Milvus, or Pinecone)
 - LLM provider integration (OpenAI, Claude, etc.)
-- Speech services (Google Speech, Azure Speech, or alternatives)  
+- Speech services (OpenAI Whisper for STT, OpenAI TTS for voice synthesis)
 - Document upload and processing for knowledge base
 - Query logging and analytics for admin
 

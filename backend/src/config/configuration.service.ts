@@ -35,16 +35,14 @@ export class ConfigurationService {
       OPENAI_API_KEY: this.configService.get('OPENAI_API_KEY'),
       OPENAI_MODEL: this.configService.get('OPENAI_MODEL'),
       OPENAI_EMBEDDING_MODEL: this.configService.get('OPENAI_EMBEDDING_MODEL'),
-      GOOGLE_CLOUD_PROJECT_ID: this.configService.get(
-        'GOOGLE_CLOUD_PROJECT_ID',
-      ),
-      GOOGLE_APPLICATION_CREDENTIALS: this.configService.get(
-        'GOOGLE_APPLICATION_CREDENTIALS',
-      ),
-      SPEECH_LANGUAGE_CODE: this.configService.get('SPEECH_LANGUAGE_CODE'),
-      SPEECH_MODEL: this.configService.get('SPEECH_MODEL'),
-      TTS_LANGUAGE_CODE: this.configService.get('TTS_LANGUAGE_CODE'),
-      TTS_VOICE_NAME: this.configService.get('TTS_VOICE_NAME'),
+      WHISPER_MODEL: this.configService.get('WHISPER_MODEL'),
+      WHISPER_LANGUAGE: this.configService.get('WHISPER_LANGUAGE'),
+      WHISPER_RESPONSE_FORMAT: this.configService.get('WHISPER_RESPONSE_FORMAT'),
+      WHISPER_TEMPERATURE: this.configService.get('WHISPER_TEMPERATURE'),
+      TTS_MODEL: this.configService.get('TTS_MODEL'),
+      TTS_VOICE: this.configService.get('TTS_VOICE'),
+      TTS_RESPONSE_FORMAT: this.configService.get('TTS_RESPONSE_FORMAT'),
+      TTS_SPEED: this.configService.get('TTS_SPEED'),
       NEXT_PUBLIC_API_URL: this.configService.get('NEXT_PUBLIC_API_URL'),
     };
 
@@ -129,18 +127,20 @@ export class ConfigurationService {
     };
   }
 
-  // Google Cloud configuration
-  get googleCloud() {
+  // Speech Services configuration (OpenAI Whisper & TTS)
+  get speech() {
     return {
-      projectId: this.validatedConfig.GOOGLE_CLOUD_PROJECT_ID,
-      credentials: this.validatedConfig.GOOGLE_APPLICATION_CREDENTIALS,
-      speech: {
-        languageCode: this.validatedConfig.SPEECH_LANGUAGE_CODE,
-        model: this.validatedConfig.SPEECH_MODEL,
+      whisper: {
+        model: this.validatedConfig.WHISPER_MODEL,
+        language: this.validatedConfig.WHISPER_LANGUAGE,
+        responseFormat: this.validatedConfig.WHISPER_RESPONSE_FORMAT,
+        temperature: this.validatedConfig.WHISPER_TEMPERATURE,
       },
-      textToSpeech: {
-        languageCode: this.validatedConfig.TTS_LANGUAGE_CODE,
-        voiceName: this.validatedConfig.TTS_VOICE_NAME,
+      tts: {
+        model: this.validatedConfig.TTS_MODEL,
+        voice: this.validatedConfig.TTS_VOICE,
+        responseFormat: this.validatedConfig.TTS_RESPONSE_FORMAT,
+        speed: this.validatedConfig.TTS_SPEED,
       },
     };
   }
@@ -161,9 +161,9 @@ export class ConfigurationService {
       qdrant:
         !this.validatedConfig.QDRANT_API_KEY ||
         this.validatedConfig.QDRANT_API_KEY.length > 0,
-      googleCloud:
-        !!this.validatedConfig.GOOGLE_CLOUD_PROJECT_ID &&
-        this.validatedConfig.GOOGLE_CLOUD_PROJECT_ID !== 'your-gcp-project-id',
+      speech:
+        !!this.validatedConfig.OPENAI_API_KEY &&
+        this.validatedConfig.OPENAI_API_KEY !== 'your-openai-api-key',
       jwt:
         !!this.validatedConfig.JWT_SECRET &&
         this.validatedConfig.JWT_SECRET !==
@@ -188,12 +188,16 @@ export class ConfigurationService {
         url: this.validatedConfig.QDRANT_URL,
         collection: this.validatedConfig.QDRANT_COLLECTION_NAME,
       },
+      speech: {
+        provider: 'OpenAI Whisper & TTS',
+        whisperModel: this.validatedConfig.WHISPER_MODEL,
+        ttsModel: this.validatedConfig.TTS_MODEL,
+        ttsVoice: this.validatedConfig.TTS_VOICE,
+      },
       apiKeys: {
         openai: apiKeyStatus.openai ? 'configured' : 'missing/placeholder',
         qdrant: apiKeyStatus.qdrant ? 'configured' : 'missing',
-        googleCloud: apiKeyStatus.googleCloud
-          ? 'configured'
-          : 'missing/placeholder',
+        speech: apiKeyStatus.speech ? 'configured' : 'missing/placeholder',
         jwt: apiKeyStatus.jwt ? 'configured' : 'missing/placeholder',
       },
     };

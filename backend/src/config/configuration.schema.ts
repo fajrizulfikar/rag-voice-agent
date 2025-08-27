@@ -34,15 +34,15 @@ export const configurationSchema = Joi.object({
   OPENAI_MODEL: Joi.string().default('gpt-3.5-turbo'),
   OPENAI_EMBEDDING_MODEL: Joi.string().default('text-embedding-ada-002'),
 
-  // Google Cloud
-  GOOGLE_CLOUD_PROJECT_ID: Joi.string().required(),
-  GOOGLE_APPLICATION_CREDENTIALS: Joi.string().required(),
-
-  // Speech Services
-  SPEECH_LANGUAGE_CODE: Joi.string().default('en-US'),
-  SPEECH_MODEL: Joi.string().default('chirp'),
-  TTS_LANGUAGE_CODE: Joi.string().default('en-US'),
-  TTS_VOICE_NAME: Joi.string().default('en-US-Neural2-D'),
+  // OpenAI Speech Services (Whisper & TTS)
+  WHISPER_MODEL: Joi.string().default('whisper-1'),
+  WHISPER_LANGUAGE: Joi.string().default('en'),
+  WHISPER_RESPONSE_FORMAT: Joi.string().valid('json', 'text', 'srt', 'verbose_json', 'vtt').default('json'),
+  WHISPER_TEMPERATURE: Joi.number().min(0).max(1).default(0),
+  TTS_MODEL: Joi.string().valid('tts-1', 'tts-1-hd').default('tts-1'),
+  TTS_VOICE: Joi.string().valid('alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer').default('nova'),
+  TTS_RESPONSE_FORMAT: Joi.string().valid('mp3', 'opus', 'aac', 'flac').default('mp3'),
+  TTS_SPEED: Joi.number().min(0.25).max(4.0).default(1.0),
 
   // Frontend
   NEXT_PUBLIC_API_URL: Joi.string().uri().optional(),
@@ -68,11 +68,13 @@ export interface ConfigurationVariables {
   OPENAI_API_KEY: string;
   OPENAI_MODEL: string;
   OPENAI_EMBEDDING_MODEL: string;
-  GOOGLE_CLOUD_PROJECT_ID: string;
-  GOOGLE_APPLICATION_CREDENTIALS: string;
-  SPEECH_LANGUAGE_CODE: string;
-  SPEECH_MODEL: string;
-  TTS_LANGUAGE_CODE: string;
-  TTS_VOICE_NAME: string;
+  WHISPER_MODEL: string;
+  WHISPER_LANGUAGE: string;
+  WHISPER_RESPONSE_FORMAT: string;
+  WHISPER_TEMPERATURE: number;
+  TTS_MODEL: string;
+  TTS_VOICE: string;
+  TTS_RESPONSE_FORMAT: string;
+  TTS_SPEED: number;
   NEXT_PUBLIC_API_URL?: string;
 }

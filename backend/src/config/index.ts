@@ -32,17 +32,21 @@ export const openaiConfig = registerAs('openai', () => ({
     process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-ada-002',
 }));
 
-// Google Cloud configuration
-export const googleCloudConfig = registerAs('googleCloud', () => ({
-  projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
-  credentials: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-  speechToTextConfig: {
-    languageCode: process.env.SPEECH_LANGUAGE_CODE || 'en-US',
-    model: process.env.SPEECH_MODEL || 'chirp',
+// Speech Services configuration (OpenAI Whisper)
+export const speechConfig = registerAs('speech', () => ({
+  // Speech-to-Text using OpenAI Whisper
+  whisper: {
+    model: process.env.WHISPER_MODEL || 'whisper-1',
+    language: process.env.WHISPER_LANGUAGE || 'en',
+    responseFormat: process.env.WHISPER_RESPONSE_FORMAT || 'json',
+    temperature: parseFloat(process.env.WHISPER_TEMPERATURE || '0'),
   },
-  textToSpeechConfig: {
-    languageCode: process.env.TTS_LANGUAGE_CODE || 'en-US',
-    voiceName: process.env.TTS_VOICE_NAME || 'en-US-Neural2-D',
+  // Text-to-Speech using OpenAI TTS
+  tts: {
+    model: process.env.TTS_MODEL || 'tts-1',
+    voice: process.env.TTS_VOICE || 'nova',
+    responseFormat: process.env.TTS_RESPONSE_FORMAT || 'mp3',
+    speed: parseFloat(process.env.TTS_SPEED || '1.0'),
   },
 }));
 
@@ -56,5 +60,5 @@ export default [
   vectorDbConfig,
   redisConfig,
   openaiConfig,
-  googleCloudConfig,
+  speechConfig,
 ];

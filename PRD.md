@@ -28,7 +28,7 @@ Vector DB: Qdrant, Milvus, or Pinecone (API-based, vendor-neutral)
 
 LLM Provider: OpenAI, Claude, or other pluggable LLM
 
-Speech Services: Google Speech, Azure Speech, or free library alternatives
+Speech Services: OpenAI Whisper for speech-to-text and OpenAI TTS for text-to-speech
 
 Frontend (Optional): Next.js web demo, or CLI client
 
