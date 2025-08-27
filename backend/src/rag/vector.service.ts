@@ -9,11 +9,11 @@ export class VectorService {
   private collectionName: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.qdrantUrl = this.configService.get<string>('vectorDb.url');
+    this.qdrantUrl = this.configService.get<string>('vectorDb.url') || 'http://localhost:6333';
     this.apiKey = this.configService.get<string>('vectorDb.apiKey');
-    this.collectionName = this.configService.get<string>(
-      'vectorDb.collectionName',
-    );
+    this.collectionName =
+      this.configService.get<string>('vectorDb.collectionName') ||
+      'faq_documents';
   }
 
   async searchSimilarDocuments(
