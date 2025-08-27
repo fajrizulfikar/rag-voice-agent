@@ -1,13 +1,13 @@
-import { 
-  Controller, 
-  Post, 
-  Get, 
-  Body, 
-  Param, 
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Param,
   Delete,
   UploadedFile,
   UseInterceptors,
-  BadRequestException
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdminService } from './admin.service';
@@ -26,7 +26,7 @@ export class AdminController {
     if (!file) {
       throw new BadRequestException('File is required');
     }
-    
+
     return await this.adminService.uploadDocument(file, uploadDocumentDto);
   }
 

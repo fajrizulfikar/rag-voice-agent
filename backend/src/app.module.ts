@@ -19,7 +19,7 @@ import { AdminModule } from './admin';
       envFilePath: '.env',
       load: configurations,
     }),
-    
+
     // TypeORM Database configuration
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -37,7 +37,7 @@ import { AdminModule } from './admin';
       }),
       inject: [ConfigService],
     }),
-    
+
     // Rate limiting protection
     ThrottlerModule.forRoot([
       {

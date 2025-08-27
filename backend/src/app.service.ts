@@ -17,7 +17,7 @@ export class AppService {
     try {
       // Check database connection
       await this.dataSource.query('SELECT 1');
-      
+
       return {
         status: 'ok',
         timestamp: new Date().toISOString(),

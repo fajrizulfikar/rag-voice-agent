@@ -18,7 +18,7 @@ export class DocumentsService {
 
   async findAll(): Promise<Document[]> {
     return await this.documentRepository.find({
-      order: { createdAt: 'DESC' }
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -30,7 +30,10 @@ export class DocumentsService {
     return document;
   }
 
-  async update(id: string, updateDocumentDto: UpdateDocumentDto): Promise<Document> {
+  async update(
+    id: string,
+    updateDocumentDto: UpdateDocumentDto,
+  ): Promise<Document> {
     const document = await this.findOne(id);
     Object.assign(document, updateDocumentDto);
     document.updatedAt = new Date();
@@ -46,7 +49,7 @@ export class DocumentsService {
     return await this.documentRepository
       .createQueryBuilder('document')
       .where('document.title ILIKE :query OR document.content ILIKE :query', {
-        query: `%${query}%`
+        query: `%${query}%`,
       })
       .orderBy('document.createdAt', 'DESC')
       .getMany();

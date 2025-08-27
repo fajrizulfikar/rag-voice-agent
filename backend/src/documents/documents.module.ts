@@ -5,9 +5,7 @@ import { DocumentsService } from './documents.service';
 import { Document } from '../entities';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Document])
-  ],
+  imports: [TypeOrmModule.forFeature([Document])],
   controllers: [DocumentsController],
   providers: [DocumentsService],
   exports: [DocumentsService],

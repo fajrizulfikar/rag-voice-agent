@@ -25,13 +25,15 @@ export class FileProcessingService {
 
     // Validate file size
     if (file.size > this.MAX_FILE_SIZE_MB * 1024 * 1024) {
-      throw new BadRequestException(`File size exceeds ${this.MAX_FILE_SIZE_MB}MB limit`);
+      throw new BadRequestException(
+        `File size exceeds ${this.MAX_FILE_SIZE_MB}MB limit`,
+      );
     }
 
     // Validate MIME type
     if (!this.ALLOWED_MIME_TYPES.includes(file.mimetype)) {
       throw new BadRequestException(
-        `File type ${file.mimetype} is not supported. Allowed types: ${this.ALLOWED_MIME_TYPES.join(', ')}`
+        `File type ${file.mimetype} is not supported. Allowed types: ${this.ALLOWED_MIME_TYPES.join(', ')}`,
       );
     }
   }
@@ -49,21 +51,23 @@ export class FileProcessingService {
       case 'text/csv':
       case 'application/json':
         return file.buffer.toString('utf-8');
-      
+
       case 'application/pdf':
         // TODO: Implement PDF text extraction using pdf-parse library
         return this.extractPdfText(file.buffer);
-      
+
       case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
         // TODO: Implement DOCX text extraction using mammoth library
         return this.extractDocxText(file.buffer);
-      
+
       case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
         // TODO: Implement XLSX text extraction using xlsx library
         return this.extractXlsxText(file.buffer);
-      
+
       default:
-        throw new BadRequestException(`Text extraction not implemented for ${file.mimetype}`);
+        throw new BadRequestException(
+          `Text extraction not implemented for ${file.mimetype}`,
+        );
     }
   }
 
@@ -71,8 +75,10 @@ export class FileProcessingService {
     // Placeholder implementation - in real application, use pdf-parse library:
     // const pdf = require('pdf-parse');
     // return pdf(buffer).then(data => data.text);
-    
-    this.logger.warn('PDF text extraction not implemented - returning placeholder');
+
+    this.logger.warn(
+      'PDF text extraction not implemented - returning placeholder',
+    );
     return `[PDF Content - Text extraction will be implemented in Stage 2]
     This is a placeholder for PDF content extraction.
     The file has been uploaded and can be processed once the pdf-parse library is integrated.`;
@@ -82,8 +88,10 @@ export class FileProcessingService {
     // Placeholder implementation - in real application, use mammoth library:
     // const mammoth = require('mammoth');
     // return mammoth.extractRawText({buffer}).then(result => result.value);
-    
-    this.logger.warn('DOCX text extraction not implemented - returning placeholder');
+
+    this.logger.warn(
+      'DOCX text extraction not implemented - returning placeholder',
+    );
     return `[DOCX Content - Text extraction will be implemented in Stage 2]
     This is a placeholder for DOCX content extraction.
     The file has been uploaded and can be processed once the mammoth library is integrated.`;
@@ -94,8 +102,10 @@ export class FileProcessingService {
     // const XLSX = require('xlsx');
     // const workbook = XLSX.read(buffer, {type: 'buffer'});
     // return XLSX.utils.sheet_to_csv(workbook.Sheets[workbook.SheetNames[0]]);
-    
-    this.logger.warn('XLSX text extraction not implemented - returning placeholder');
+
+    this.logger.warn(
+      'XLSX text extraction not implemented - returning placeholder',
+    );
     return `[XLSX Content - Text extraction will be implemented in Stage 2]
     This is a placeholder for Excel content extraction.
     The file has been uploaded and can be processed once the xlsx library is integrated.`;
@@ -110,11 +120,15 @@ export class FileProcessingService {
     const random = Math.random().toString(36).substring(2);
     const ext = this.getFileExtension(originalName);
     const nameWithoutExt = path.basename(originalName, ext);
-    
+
     return `${nameWithoutExt}_${timestamp}_${random}${ext}`;
   }
 
-  chunkText(text: string, maxChunkSize: number = 1000, overlapSize: number = 200): string[] {
+  chunkText(
+    text: string,
+    maxChunkSize: number = 1000,
+    overlapSize: number = 200,
+  ): string[] {
     if (text.length <= maxChunkSize) {
       return [text];
     }
@@ -131,7 +145,7 @@ export class FileProcessingService {
         const lastSentenceEnd = Math.max(
           chunk.lastIndexOf('.'),
           chunk.lastIndexOf('!'),
-          chunk.lastIndexOf('?')
+          chunk.lastIndexOf('?'),
         );
 
         if (lastSentenceEnd > chunk.length * 0.5) {
@@ -143,6 +157,6 @@ export class FileProcessingService {
       startIndex = startIndex + chunk.length - overlapSize;
     }
 
-    return chunks.filter(chunk => chunk.length > 0);
+    return chunks.filter((chunk) => chunk.length > 0);
   }
 }

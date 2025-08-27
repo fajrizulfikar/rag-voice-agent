@@ -5,7 +5,8 @@ import { registerAs } from '@nestjs/config';
 export const appConfig = registerAs('app', () => ({
   port: parseInt(process.env.PORT ?? '', 10) || 3000,
   environment: process.env.NODE_ENV || 'development',
-  jwtSecret: process.env.JWT_SECRET || 'your-jwt-secret-key-change-in-production',
+  jwtSecret:
+    process.env.JWT_SECRET || 'your-jwt-secret-key-change-in-production',
 }));
 
 // Vector database configuration (Qdrant)
@@ -27,7 +28,8 @@ export const redisConfig = registerAs('redis', () => ({
 export const openaiConfig = registerAs('openai', () => ({
   apiKey: process.env.OPENAI_API_KEY,
   model: process.env.OPENAI_MODEL || 'gpt-3.5-turbo',
-  embeddingModel: process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-ada-002',
+  embeddingModel:
+    process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-ada-002',
 }));
 
 // Google Cloud configuration

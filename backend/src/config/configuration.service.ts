@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { configurationSchema, ConfigurationVariables } from './configuration.schema';
+import {
+  configurationSchema,
+  ConfigurationVariables,
+} from './configuration.schema';
 
 @Injectable()
 export class ConfigurationService {
@@ -32,8 +35,12 @@ export class ConfigurationService {
       OPENAI_API_KEY: this.configService.get('OPENAI_API_KEY'),
       OPENAI_MODEL: this.configService.get('OPENAI_MODEL'),
       OPENAI_EMBEDDING_MODEL: this.configService.get('OPENAI_EMBEDDING_MODEL'),
-      GOOGLE_CLOUD_PROJECT_ID: this.configService.get('GOOGLE_CLOUD_PROJECT_ID'),
-      GOOGLE_APPLICATION_CREDENTIALS: this.configService.get('GOOGLE_APPLICATION_CREDENTIALS'),
+      GOOGLE_CLOUD_PROJECT_ID: this.configService.get(
+        'GOOGLE_CLOUD_PROJECT_ID',
+      ),
+      GOOGLE_APPLICATION_CREDENTIALS: this.configService.get(
+        'GOOGLE_APPLICATION_CREDENTIALS',
+      ),
       SPEECH_LANGUAGE_CODE: this.configService.get('SPEECH_LANGUAGE_CODE'),
       SPEECH_MODEL: this.configService.get('SPEECH_MODEL'),
       TTS_LANGUAGE_CODE: this.configService.get('TTS_LANGUAGE_CODE'),
@@ -148,10 +155,19 @@ export class ConfigurationService {
   // Utility methods
   validateApiKeys(): { [key: string]: boolean } {
     const apiKeys = {
-      openai: !!this.validatedConfig.OPENAI_API_KEY && this.validatedConfig.OPENAI_API_KEY !== 'your-openai-api-key',
-      qdrant: !this.validatedConfig.QDRANT_API_KEY || this.validatedConfig.QDRANT_API_KEY.length > 0,
-      googleCloud: !!this.validatedConfig.GOOGLE_CLOUD_PROJECT_ID && this.validatedConfig.GOOGLE_CLOUD_PROJECT_ID !== 'your-gcp-project-id',
-      jwt: !!this.validatedConfig.JWT_SECRET && this.validatedConfig.JWT_SECRET !== 'your-super-secret-jwt-key-change-this-in-production',
+      openai:
+        !!this.validatedConfig.OPENAI_API_KEY &&
+        this.validatedConfig.OPENAI_API_KEY !== 'your-openai-api-key',
+      qdrant:
+        !this.validatedConfig.QDRANT_API_KEY ||
+        this.validatedConfig.QDRANT_API_KEY.length > 0,
+      googleCloud:
+        !!this.validatedConfig.GOOGLE_CLOUD_PROJECT_ID &&
+        this.validatedConfig.GOOGLE_CLOUD_PROJECT_ID !== 'your-gcp-project-id',
+      jwt:
+        !!this.validatedConfig.JWT_SECRET &&
+        this.validatedConfig.JWT_SECRET !==
+          'your-super-secret-jwt-key-change-this-in-production',
     };
 
     return apiKeys;
@@ -159,7 +175,7 @@ export class ConfigurationService {
 
   getConfigurationSummary() {
     const apiKeyStatus = this.validateApiKeys();
-    
+
     return {
       environment: this.validatedConfig.NODE_ENV,
       port: this.validatedConfig.PORT,
@@ -175,7 +191,9 @@ export class ConfigurationService {
       apiKeys: {
         openai: apiKeyStatus.openai ? 'configured' : 'missing/placeholder',
         qdrant: apiKeyStatus.qdrant ? 'configured' : 'missing',
-        googleCloud: apiKeyStatus.googleCloud ? 'configured' : 'missing/placeholder',
+        googleCloud: apiKeyStatus.googleCloud
+          ? 'configured'
+          : 'missing/placeholder',
         jwt: apiKeyStatus.jwt ? 'configured' : 'missing/placeholder',
       },
     };

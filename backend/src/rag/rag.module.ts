@@ -8,10 +8,7 @@ import { QueryLog } from '../entities';
 import { DocumentsModule } from '../documents';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([QueryLog]),
-    DocumentsModule,
-  ],
+  imports: [TypeOrmModule.forFeature([QueryLog]), DocumentsModule],
   controllers: [RagController],
   providers: [RagService, VectorService, EmbeddingService],
   exports: [RagService, VectorService, EmbeddingService],

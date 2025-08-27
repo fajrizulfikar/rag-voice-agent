@@ -25,18 +25,31 @@ export class LoggingService implements LoggerService {
   }
 
   logQuery(query: string, userId?: string, sessionId?: string) {
-    this.log(`Query received: ${query}`, `User: ${userId || 'anonymous'}, Session: ${sessionId || 'none'}`);
+    this.log(
+      `Query received: ${query}`,
+      `User: ${userId || 'anonymous'}, Session: ${sessionId || 'none'}`,
+    );
   }
 
   logResponse(response: string, processingTime: number, context?: string) {
-    this.log(`Response generated in ${processingTime}ms: ${response.substring(0, 100)}...`, context);
+    this.log(
+      `Response generated in ${processingTime}ms: ${response.substring(0, 100)}...`,
+      context,
+    );
   }
 
   logError(error: Error, context?: string, additionalInfo?: any) {
-    this.error(`Error in ${context}: ${error.message}`, error.stack, JSON.stringify(additionalInfo));
+    this.error(
+      `Error in ${context}: ${error.message}`,
+      error.stack,
+      JSON.stringify(additionalInfo),
+    );
   }
 
   logSystemEvent(event: string, details?: any) {
-    this.log(`System event: ${event}`, details ? JSON.stringify(details) : undefined);
+    this.log(
+      `System event: ${event}`,
+      details ? JSON.stringify(details) : undefined,
+    );
   }
 }
