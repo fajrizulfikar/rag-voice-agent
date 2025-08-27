@@ -1,4 +1,27 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateDocumentDto } from './create-document.dto';
+import { IsString, IsOptional, IsUrl } from 'class-validator';
 
-export class UpdateDocumentDto extends PartialType(CreateDocumentDto) {}
+export class UpdateDocumentDto {
+  @IsString()
+  @IsOptional()
+  title?: string;
+
+  @IsString()
+  @IsOptional()
+  content?: string;
+
+  @IsString()
+  @IsOptional()
+  category?: string;
+
+  @IsString()
+  @IsOptional()
+  tags?: string;
+
+  @IsUrl({}, { message: 'Source URL must be a valid URL' })
+  @IsOptional()
+  sourceUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  metadata?: string;
+}
