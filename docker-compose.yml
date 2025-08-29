@@ -71,13 +71,8 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
-    environment:
-      NODE_ENV: development
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/rag_voice_db
-      QDRANT_URL: http://qdrant:6333
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: your-jwt-secret-key-change-in-production
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    env_file:
+      - ./backend/.env
     depends_on:
       postgres:
         condition: service_healthy
