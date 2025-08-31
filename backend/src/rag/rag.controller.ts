@@ -1,28 +1,42 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common';
 import { RagService } from './rag.service';
 import { TextQueryDto, VoiceQueryDto } from './dto';
+import { JwtAuthGuard, RolesGuard } from '../auth/guards';
+import { Roles, GetUser } from '../auth/decorators';
+import { UserRole, User } from '../entities';
 
 @Controller('query')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class RagController {
   constructor(private readonly ragService: RagService) {}
 
   @Post('text')
-  async textQuery(@Body() textQueryDto: TextQueryDto) {
+  @Roles(UserRole.USER, UserRole.ADMIN)
+  async textQuery(
+    @Body() textQueryDto: TextQueryDto,
+    @GetUser() user: User,
+  ) {
     return await this.ragService.processTextQuery(textQueryDto);
   }
 
   @Post('voice')
-  async voiceQuery(@Body() voiceQueryDto: VoiceQueryDto) {
+  @Roles(UserRole.USER, UserRole.ADMIN)
+  async voiceQuery(
+    @Body() voiceQueryDto: VoiceQueryDto,
+    @GetUser() user: User,
+  ) {
     return await this.ragService.processVoiceQuery(voiceQueryDto);
   }
 
   @Get('logs')
-  async getQueryLogs() {
+  @Roles(UserRole.ADMIN)
+  async getQueryLogs(@GetUser() user: User) {
     return await this.ragService.getQueryLogs();
   }
 
   @Get('logs/:id')
-  async getQueryLog(@Param('id') id: string) {
+  @Roles(UserRole.ADMIN)
+  async getQueryLog(@Param('id') id: string, @GetUser() user: User) {
     return await this.ragService.getQueryLog(id);
   }
 }

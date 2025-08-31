@@ -20,6 +20,7 @@ import {
   AuthResponse,
 } from './auth.service';
 import { UserRole } from '../entities/user.entity';
+import { Public } from './decorators';
 
 export class LoginRequestDto implements LoginDto {
   @IsString()
@@ -65,6 +66,7 @@ export class RegisterRequestDto implements RegisterDto {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(
@@ -73,6 +75,7 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  @Public()
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   async register(
