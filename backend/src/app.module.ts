@@ -5,11 +5,12 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import configurations from './config';
-import { Document, QueryLog } from './entities';
+import { Document, QueryLog, User } from './entities';
 import { CommonModule } from './common';
 import { DocumentsModule } from './documents';
 import { RagModule } from './rag';
 import { AdminModule } from './admin';
+import { AuthModule } from './auth';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { AdminModule } from './admin';
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [Document, QueryLog],
+        entities: [Document, QueryLog, User],
         synchronize: configService.get('database.synchronize'),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),
@@ -48,6 +49,7 @@ import { AdminModule } from './admin';
 
     // Feature modules
     CommonModule,
+    AuthModule,
     DocumentsModule,
     RagModule,
     AdminModule,

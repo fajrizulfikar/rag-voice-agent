@@ -26,8 +26,10 @@ export const configurationSchema = Joi.object({
   REDIS_PORT: Joi.number().port().default(6379),
   REDIS_PASSWORD: Joi.string().allow('').optional(),
 
-  // Security
+  // Security - JWT
   JWT_SECRET: Joi.string().min(32).required(),
+  JWT_EXPIRES_IN: Joi.string().default('15m'),
+  JWT_REFRESH_EXPIRES_IN: Joi.string().default('7d'),
 
   // OpenAI
   OPENAI_API_KEY: Joi.string().required(),
@@ -65,6 +67,8 @@ export interface ConfigurationVariables {
   REDIS_PORT: number;
   REDIS_PASSWORD?: string;
   JWT_SECRET: string;
+  JWT_EXPIRES_IN: string;
+  JWT_REFRESH_EXPIRES_IN: string;
   OPENAI_API_KEY: string;
   OPENAI_MODEL: string;
   OPENAI_EMBEDDING_MODEL: string;

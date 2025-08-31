@@ -1,12 +1,11 @@
 import { databaseConfig } from './database.config';
+import { jwtConfig } from './jwt.config';
 import { registerAs } from '@nestjs/config';
 
 // Application configuration
 export const appConfig = registerAs('app', () => ({
   port: parseInt(process.env.PORT ?? '', 10) || 3000,
   environment: process.env.NODE_ENV || 'development',
-  jwtSecret:
-    process.env.JWT_SECRET || 'your-jwt-secret-key-change-in-production',
 }));
 
 // Vector database configuration (Qdrant)
@@ -50,13 +49,14 @@ export const speechConfig = registerAs('speech', () => ({
   },
 }));
 
-export { databaseConfig };
+export { databaseConfig, jwtConfig };
 export * from './configuration.service';
 export * from './configuration.schema';
 
 export default [
   appConfig,
   databaseConfig,
+  jwtConfig,
   vectorDbConfig,
   redisConfig,
   openaiConfig,
