@@ -22,20 +22,20 @@ export class DocumentsController {
   @Roles(UserRole.USER, UserRole.ADMIN)
   create(
     @Body() createDocumentDto: CreateDocumentDto,
-    @GetUser() user: User,
+    @GetUser() _user: User,
   ) {
     return this.documentsService.create(createDocumentDto);
   }
 
   @Get()
   @Roles(UserRole.USER, UserRole.ADMIN)
-  findAll(@GetUser() user: User) {
+  findAll(@GetUser() _user: User) {
     return this.documentsService.findAll();
   }
 
   @Get(':id')
   @Roles(UserRole.USER, UserRole.ADMIN)
-  findOne(@Param('id') id: string, @GetUser() user: User) {
+  findOne(@Param('id') id: string, @GetUser() _user: User) {
     return this.documentsService.findOne(id);
   }
 
@@ -44,14 +44,14 @@ export class DocumentsController {
   update(
     @Param('id') id: string,
     @Body() updateDocumentDto: UpdateDocumentDto,
-    @GetUser() user: User,
+    @GetUser() _user: User,
   ) {
     return this.documentsService.update(id, updateDocumentDto);
   }
 
   @Delete(':id')
   @Roles(UserRole.ADMIN)
-  remove(@Param('id') id: string, @GetUser() user: User) {
+  remove(@Param('id') id: string, @GetUser() _user: User) {
     return this.documentsService.remove(id);
   }
 }

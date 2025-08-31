@@ -14,7 +14,7 @@ export class RagController {
   @Roles(UserRole.USER, UserRole.ADMIN)
   async textQuery(
     @Body() textQueryDto: TextQueryDto,
-    @GetUser() user: User,
+    @GetUser() _user: User,
   ) {
     return await this.ragService.processTextQuery(textQueryDto);
   }
@@ -23,20 +23,20 @@ export class RagController {
   @Roles(UserRole.USER, UserRole.ADMIN)
   async voiceQuery(
     @Body() voiceQueryDto: VoiceQueryDto,
-    @GetUser() user: User,
+    @GetUser() _user: User,
   ) {
     return await this.ragService.processVoiceQuery(voiceQueryDto);
   }
 
   @Get('logs')
   @Roles(UserRole.ADMIN)
-  async getQueryLogs(@GetUser() user: User) {
+  async getQueryLogs(@GetUser() _user: User) {
     return await this.ragService.getQueryLogs();
   }
 
   @Get('logs/:id')
   @Roles(UserRole.ADMIN)
-  async getQueryLog(@Param('id') id: string, @GetUser() user: User) {
+  async getQueryLog(@Param('id') id: string, @GetUser() _user: User) {
     return await this.ragService.getQueryLog(id);
   }
 }

@@ -28,7 +28,7 @@ export class AdminController {
   async uploadDocument(
     @UploadedFile() file: Express.Multer.File,
     @Body() uploadDocumentDto: UploadDocumentDto,
-    @GetUser() user: User,
+    @GetUser() _user: User,
   ) {
     if (!file) {
       throw new BadRequestException('File is required');
@@ -40,7 +40,7 @@ export class AdminController {
   @Post('upload-text-doc')
   async uploadTextDocument(
     @Body() uploadDocumentDto: UploadDocumentDto,
-    @GetUser() user: User,
+    @GetUser() _user: User,
   ) {
     return await this.adminService.uploadTextDocument(uploadDocumentDto);
   }
@@ -73,7 +73,7 @@ export class AdminController {
   @Post('reindex')
   async reindexVectorDatabase(
     @Body() reindexDto: ReindexDto,
-    @GetUser() user: User,
+    @GetUser() _user: User,
   ) {
     return await this.adminService.reindexVectorDatabase(reindexDto);
   }
