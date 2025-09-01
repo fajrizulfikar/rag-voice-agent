@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SupportedFileType } from '../interfaces';
 import * as pdfParse from 'pdf-parse';
 import * as mammoth from 'mammoth';
-import * as cheerio from 'cheerio';
+// cheerio will be imported dynamically when needed
 
 @Injectable()
 export class TextExtractionService {
@@ -68,6 +68,8 @@ export class TextExtractionService {
   private async extractFromHtml(file: Buffer): Promise<string> {
     try {
       const html = file.toString('utf-8');
+      // Lazy import cheerio only when needed to avoid File API issues
+      const cheerio = await import('cheerio');
       const $ = cheerio.load(html);
 
       // Remove script and style elements

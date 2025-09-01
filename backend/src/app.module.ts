@@ -12,6 +12,7 @@ import { DocumentsModule } from './documents';
 import { RagModule } from './rag';
 import { AdminModule } from './admin';
 import { AuthModule } from './auth';
+import { DocumentProcessingModule } from './modules/document-processing/document-processing.module';
 import { JwtAuthGuard } from './auth/guards';
 
 @Module({
@@ -53,6 +54,7 @@ import { JwtAuthGuard } from './auth/guards';
     CommonModule,
     AuthModule,
     DocumentsModule,
+    DocumentProcessingModule,
     RagModule,
     AdminModule,
   ],
