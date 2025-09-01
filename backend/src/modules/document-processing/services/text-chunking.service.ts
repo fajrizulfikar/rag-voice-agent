@@ -4,10 +4,12 @@ import {
   ChunkingOptions,
   ChunkingStrategy,
 } from '../interfaces';
+import { encoding_for_model } from 'tiktoken';
 
 @Injectable()
 export class TextChunkingService {
   private readonly logger = new Logger(TextChunkingService.name);
+  private readonly tokenizer = encoding_for_model('text-embedding-ada-002');
 
   async chunkText(
     text: string,
@@ -148,12 +150,72 @@ export class TextChunkingService {
     documentId: string,
     sourceFile: string,
   ): DocumentChunk[] {
-    // TODO: Implement token-aware chunking using tiktoken
-    // For now, fallback to fixed size chunking
-    this.logger.warn(
-      'Token-aware chunking not yet implemented, falling back to fixed size',
+    const chunks: DocumentChunk[] = [];
+    const { maxChunkSize, overlapSize } = options;
+    const maxTokens = Math.floor(maxChunkSize / 4); // Rough estimate: 4 chars per token
+    const overlapTokens = Math.floor(overlapSize / 4);
+
+    this.logger.debug(
+      `Token-aware chunking: max ${maxTokens} tokens, overlap ${overlapTokens} tokens`,
     );
-    return this.fixedSizeChunking(text, options, documentId, sourceFile);
+
+    // Split text into sentences for better chunk boundaries
+    const sentences = this.splitIntoSentences(text);
+    let currentChunk = '';
+    let currentTokenCount = 0;
+    let startPosition = 0;
+
+    for (const sentence of sentences) {
+      const sentenceTokens = this.countTokens(sentence);
+      
+      // If adding this sentence would exceed max tokens, finalize current chunk
+      if (currentTokenCount + sentenceTokens > maxTokens && currentChunk) {
+        chunks.push(
+          this.createChunk(
+            currentChunk.trim(),
+            chunks.length,
+            documentId,
+            sourceFile,
+            options.strategy,
+            startPosition,
+            startPosition + currentChunk.length,
+          ),
+        );
+        
+        // Start new chunk with overlap from previous chunk if specified
+        if (overlapTokens > 0 && currentChunk) {
+          const overlapText = this.getLastNTokensAsText(currentChunk, overlapTokens);
+          currentChunk = overlapText + ' ' + sentence;
+          currentTokenCount = this.countTokens(currentChunk);
+        } else {
+          currentChunk = sentence;
+          currentTokenCount = sentenceTokens;
+        }
+        
+        startPosition += currentChunk.length - sentence.length;
+      } else {
+        // Add sentence to current chunk
+        currentChunk += (currentChunk ? ' ' : '') + sentence;
+        currentTokenCount += sentenceTokens;
+      }
+    }
+
+    // Add the last chunk if it has content
+    if (currentChunk.trim()) {
+      chunks.push(
+        this.createChunk(
+          currentChunk.trim(),
+          chunks.length,
+          documentId,
+          sourceFile,
+          options.strategy,
+          startPosition,
+          startPosition + currentChunk.length,
+        ),
+      );
+    }
+
+    return this.updateTotalChunks(chunks);
   }
 
   private createChunk(
@@ -192,8 +254,40 @@ export class TextChunkingService {
   }
 
   private estimateTokenCount(text: string): number {
-    // Simple token estimation: roughly 4 characters per token
-    // TODO: Use tiktoken for accurate token counting
-    return Math.ceil(text.length / 4);
+    return this.countTokens(text);
+  }
+
+  private countTokens(text: string): number {
+    try {
+      return this.tokenizer.encode(text).length;
+    } catch (error: any) {
+      this.logger.warn(`Failed to count tokens, using estimation: ${error}`);
+      // Fallback to character-based estimation
+      return Math.ceil(text.length / 4);
+    }
+  }
+
+  private splitIntoSentences(text: string): string[] {
+    // More sophisticated sentence splitting
+    return text
+      .split(/[.!?]+/)
+      .map(sentence => sentence.trim())
+      .filter((sentence) => sentence.length > 0);
+  }
+
+  private getLastNTokensAsText(text: string, n: number): string {
+    try {
+      const tokens = this.tokenizer.encode(text);
+      const lastNTokens = tokens.slice(-n);
+      const decoded = this.tokenizer.decode(lastNTokens);
+      return typeof decoded === 'string' ? decoded : new TextDecoder().decode(decoded);
+    } catch (error: any) {
+      this.logger.warn(
+        `Failed to extract last N tokens, using character fallback: ${error}`,
+      );
+      // Fallback to character-based estimation
+      const estimatedChars = n * 4;
+      return text.slice(-estimatedChars);
+    }
   }
 }
