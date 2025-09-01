@@ -1,37 +1,94 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { OpenAI } from 'openai';
 
 @Injectable()
 export class EmbeddingService {
   private readonly logger = new Logger(EmbeddingService.name);
-  private openaiApiKey: string;
+  private openaiClient: OpenAI;
   private embeddingModel: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.openaiApiKey = this.configService.get<string>('openai.apiKey') || '';
+    const apiKey = this.configService.get<string>('openai.apiKey');
+    if (!apiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+    
+    this.openaiClient = new OpenAI({
+      apiKey,
+    });
+    
+    // Keep using ada-002 to match the 1536 vector dimensions in Qdrant
     this.embeddingModel =
       this.configService.get<string>('openai.embeddingModel') ||
       'text-embedding-ada-002';
   }
 
   async generateEmbedding(text: string): Promise<number[]> {
-    // Placeholder implementation - will be replaced with actual OpenAI embedding generation in Stage 2
+    if (!text || text.trim().length === 0) {
+      throw new Error('Text cannot be empty for embedding generation');
+    }
+
     this.logger.debug(`Generating embedding for text of length ${text.length}`);
 
-    // Return a mock embedding vector for now
-    return new Array(1536).fill(0).map(() => Math.random() * 2 - 1);
+    try {
+      const response = await this.openaiClient.embeddings.create({
+        model: this.embeddingModel,
+        input: text,
+      });
+
+      if (!response.data || response.data.length === 0) {
+        throw new Error('No embedding data received from OpenAI');
+      }
+
+      return response.data[0].embedding;
+    } catch (error: any) {
+      this.logger.error(`Failed to generate embedding: ${error.message}`);
+      throw new Error(`Failed to generate embedding: ${error.message}`);
+    }
   }
 
   async generateEmbeddings(texts: string[]): Promise<number[][]> {
-    // Placeholder implementation - will be replaced with batch embedding generation in Stage 2
-    this.logger.debug(`Generating embeddings for ${texts.length} texts`);
-
-    const embeddings: number[][] = [];
-    for (const text of texts) {
-      embeddings.push(await this.generateEmbedding(text));
+    if (!texts || texts.length === 0) {
+      return [];
     }
 
-    return embeddings;
+    // Filter out empty texts
+    const validTexts = texts.filter(text => text && text.trim().length > 0);
+    if (validTexts.length === 0) {
+      throw new Error('No valid texts provided for embedding generation');
+    }
+
+    this.logger.debug(`Generating embeddings for ${validTexts.length} texts`);
+
+    try {
+      // OpenAI supports batch embedding generation
+      const batchSize = 100; // Conservative batch size
+      const embeddings: number[][] = [];
+
+      for (let i = 0; i < validTexts.length; i += batchSize) {
+        const batch = validTexts.slice(i, i + batchSize);
+        
+        const response = await this.openaiClient.embeddings.create({
+          model: this.embeddingModel,
+          input: batch,
+        });
+
+        if (!response.data || response.data.length === 0) {
+          throw new Error('No embedding data received from OpenAI');
+        }
+
+        // Add embeddings in the same order as the input texts
+        for (const embedding of response.data) {
+          embeddings.push(embedding.embedding);
+        }
+      }
+
+      return embeddings;
+    } catch (error: any) {
+      this.logger.error(`Failed to generate embeddings: ${error.message}`);
+      throw new Error(`Failed to generate embeddings: ${error.message}`);
+    }
   }
 
   async calculateSimilarity(
