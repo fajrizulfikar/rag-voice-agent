@@ -42,7 +42,10 @@ describe('JwtAuthGuard', () => {
     it('should call super.canActivate for protected routes', () => {
       // Arrange
       jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
-      const superCanActivateSpy = jest.spyOn(Object.getPrototypeOf(JwtAuthGuard.prototype), 'canActivate');
+      const superCanActivateSpy = jest.spyOn(
+        Object.getPrototypeOf(JwtAuthGuard.prototype),
+        'canActivate',
+      );
       superCanActivateSpy.mockReturnValue(true);
 
       // Act
@@ -59,7 +62,10 @@ describe('JwtAuthGuard', () => {
     it('should call super.canActivate when isPublic is undefined', () => {
       // Arrange
       jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(undefined);
-      const superCanActivateSpy = jest.spyOn(Object.getPrototypeOf(JwtAuthGuard.prototype), 'canActivate');
+      const superCanActivateSpy = jest.spyOn(
+        Object.getPrototypeOf(JwtAuthGuard.prototype),
+        'canActivate',
+      );
       superCanActivateSpy.mockReturnValue(true);
 
       // Act

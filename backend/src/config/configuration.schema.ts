@@ -39,11 +39,17 @@ export const configurationSchema = Joi.object({
   // OpenAI Speech Services (Whisper & TTS)
   WHISPER_MODEL: Joi.string().default('whisper-1'),
   WHISPER_LANGUAGE: Joi.string().default('en'),
-  WHISPER_RESPONSE_FORMAT: Joi.string().valid('json', 'text', 'srt', 'verbose_json', 'vtt').default('json'),
+  WHISPER_RESPONSE_FORMAT: Joi.string()
+    .valid('json', 'text', 'srt', 'verbose_json', 'vtt')
+    .default('json'),
   WHISPER_TEMPERATURE: Joi.number().min(0).max(1).default(0),
   TTS_MODEL: Joi.string().valid('tts-1', 'tts-1-hd').default('tts-1'),
-  TTS_VOICE: Joi.string().valid('alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer').default('nova'),
-  TTS_RESPONSE_FORMAT: Joi.string().valid('mp3', 'opus', 'aac', 'flac').default('mp3'),
+  TTS_VOICE: Joi.string()
+    .valid('alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer')
+    .default('nova'),
+  TTS_RESPONSE_FORMAT: Joi.string()
+    .valid('mp3', 'opus', 'aac', 'flac')
+    .default('mp3'),
   TTS_SPEED: Joi.number().min(0.25).max(4.0).default(1.0),
 
   // Frontend

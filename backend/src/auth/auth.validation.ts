@@ -21,7 +21,9 @@ export class AuthValidationService {
       const jwtExpiresIn = this.configService.get<string>('jwt.expiresIn');
 
       if (!jwtSecret || jwtSecret.length < 32) {
-        this.logger.error('JWT_SECRET is missing or too short (minimum 32 characters)');
+        this.logger.error(
+          'JWT_SECRET is missing or too short (minimum 32 characters)',
+        );
         return false;
       }
 
@@ -35,7 +37,9 @@ export class AuthValidationService {
       // Test authentication flow
       await this.testAuthenticationFlow();
 
-      this.logger.log('Authentication system validation completed successfully');
+      this.logger.log(
+        'Authentication system validation completed successfully',
+      );
       return true;
     } catch (error) {
       this.logger.error('Authentication validation failed:', error);
@@ -58,7 +62,7 @@ export class AuthValidationService {
       };
 
       const registrationResult = await this.authService.register(testUser);
-      
+
       if (!registrationResult.access_token) {
         throw new Error('Registration did not return access token');
       }
@@ -92,7 +96,6 @@ export class AuthValidationService {
       // Clean up test user
       // Note: In a real implementation, you'd have a user deletion method
       this.logger.log('✓ Authentication flow test completed successfully');
-
     } catch (error) {
       this.logger.error('Authentication flow test failed:', error);
       throw error;
@@ -115,8 +118,14 @@ export class AuthValidationService {
       if (!value) {
         this.logger.error(`Required environment variable ${envVar} is missing`);
         allValid = false;
-      } else if (value.includes('change-in-production') || value.includes('your-') || value === 'test-key') {
-        this.logger.warn(`Environment variable ${envVar} appears to use a default/test value`);
+      } else if (
+        value.includes('change-in-production') ||
+        value.includes('your-') ||
+        value === 'test-key'
+      ) {
+        this.logger.warn(
+          `Environment variable ${envVar} appears to use a default/test value`,
+        );
       }
     }
 

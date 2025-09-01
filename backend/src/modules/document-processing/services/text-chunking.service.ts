@@ -167,7 +167,7 @@ export class TextChunkingService {
 
     for (const sentence of sentences) {
       const sentenceTokens = this.countTokens(sentence);
-      
+
       // If adding this sentence would exceed max tokens, finalize current chunk
       if (currentTokenCount + sentenceTokens > maxTokens && currentChunk) {
         chunks.push(
@@ -181,17 +181,20 @@ export class TextChunkingService {
             startPosition + currentChunk.length,
           ),
         );
-        
+
         // Start new chunk with overlap from previous chunk if specified
         if (overlapTokens > 0 && currentChunk) {
-          const overlapText = this.getLastNTokensAsText(currentChunk, overlapTokens);
+          const overlapText = this.getLastNTokensAsText(
+            currentChunk,
+            overlapTokens,
+          );
           currentChunk = overlapText + ' ' + sentence;
           currentTokenCount = this.countTokens(currentChunk);
         } else {
           currentChunk = sentence;
           currentTokenCount = sentenceTokens;
         }
-        
+
         startPosition += currentChunk.length - sentence.length;
       } else {
         // Add sentence to current chunk
@@ -271,7 +274,7 @@ export class TextChunkingService {
     // More sophisticated sentence splitting
     return text
       .split(/[.!?]+/)
-      .map(sentence => sentence.trim())
+      .map((sentence) => sentence.trim())
       .filter((sentence) => sentence.length > 0);
   }
 
@@ -280,7 +283,9 @@ export class TextChunkingService {
       const tokens = this.tokenizer.encode(text);
       const lastNTokens = tokens.slice(-n);
       const decoded = this.tokenizer.decode(lastNTokens);
-      return typeof decoded === 'string' ? decoded : new TextDecoder().decode(decoded);
+      return typeof decoded === 'string'
+        ? decoded
+        : new TextDecoder().decode(decoded);
     } catch (error: any) {
       this.logger.warn(
         `Failed to extract last N tokens, using character fallback: ${error}`,

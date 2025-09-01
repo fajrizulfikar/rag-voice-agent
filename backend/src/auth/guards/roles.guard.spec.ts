@@ -42,8 +42,12 @@ describe('RolesGuard', () => {
 
     it('should return false when user is not present in request', () => {
       // Arrange
-      jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRole.ADMIN]);
-      jest.spyOn(context.switchToHttp().getRequest(), 'call').mockReturnValue({});
+      jest
+        .spyOn(reflector, 'getAllAndOverride')
+        .mockReturnValue([UserRole.ADMIN]);
+      jest
+        .spyOn(context.switchToHttp().getRequest(), 'call')
+        .mockReturnValue({});
 
       // Act
       const result = guard.canActivate(context);
@@ -62,8 +66,12 @@ describe('RolesGuard', () => {
         isActive: true,
       } as User;
 
-      jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRole.ADMIN]);
-      jest.spyOn(context.switchToHttp().getRequest(), 'call').mockReturnValue({ user: mockUser });
+      jest
+        .spyOn(reflector, 'getAllAndOverride')
+        .mockReturnValue([UserRole.ADMIN]);
+      jest
+        .spyOn(context.switchToHttp().getRequest(), 'call')
+        .mockReturnValue({ user: mockUser });
 
       // Act
       const result = guard.canActivate(context);
@@ -82,8 +90,12 @@ describe('RolesGuard', () => {
         isActive: true,
       } as User;
 
-      jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRole.ADMIN]);
-      jest.spyOn(context.switchToHttp().getRequest(), 'call').mockReturnValue({ user: mockUser });
+      jest
+        .spyOn(reflector, 'getAllAndOverride')
+        .mockReturnValue([UserRole.ADMIN]);
+      jest
+        .spyOn(context.switchToHttp().getRequest(), 'call')
+        .mockReturnValue({ user: mockUser });
 
       // Act
       const result = guard.canActivate(context);
@@ -102,8 +114,12 @@ describe('RolesGuard', () => {
         isActive: true,
       } as User;
 
-      jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRole.USER, UserRole.ADMIN]);
-      jest.spyOn(context.switchToHttp().getRequest(), 'call').mockReturnValue({ user: mockUser });
+      jest
+        .spyOn(reflector, 'getAllAndOverride')
+        .mockReturnValue([UserRole.USER, UserRole.ADMIN]);
+      jest
+        .spyOn(context.switchToHttp().getRequest(), 'call')
+        .mockReturnValue({ user: mockUser });
 
       // Act
       const result = guard.canActivate(context);

@@ -44,12 +44,16 @@ export class TextExtractionService {
     try {
       const result = await mammoth.extractRawText({ buffer: file });
       if (result.messages.length > 0) {
-        this.logger.warn(`DOCX extraction warnings: ${result.messages.map(m => m.message).join(', ')}`);
+        this.logger.warn(
+          `DOCX extraction warnings: ${result.messages.map((m) => m.message).join(', ')}`,
+        );
       }
       return result.value;
     } catch (error) {
       this.logger.error(`Failed to extract text from DOCX: ${error.message}`);
-      throw new Error(`Failed to extract text from DOCX file: ${error.message}`);
+      throw new Error(
+        `Failed to extract text from DOCX file: ${error.message}`,
+      );
     }
   }
 
@@ -65,18 +69,20 @@ export class TextExtractionService {
     try {
       const html = file.toString('utf-8');
       const $ = cheerio.load(html);
-      
+
       // Remove script and style elements
       $('script, style').remove();
-      
+
       // Extract text content
       const text = $('body').text() || $.text();
-      
+
       // Clean up whitespace
       return text.replace(/\s+/g, ' ').trim();
     } catch (error) {
       this.logger.error(`Failed to extract text from HTML: ${error.message}`);
-      throw new Error(`Failed to extract text from HTML file: ${error.message}`);
+      throw new Error(
+        `Failed to extract text from HTML file: ${error.message}`,
+      );
     }
   }
 

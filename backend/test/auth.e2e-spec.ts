@@ -29,7 +29,9 @@ describe('Authentication System (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = moduleFixture.get<Repository<User>>(
+      getRepositoryToken(User),
+    );
 
     // Create test users
     await createTestUsers();
@@ -131,29 +133,21 @@ describe('Authentication System (e2e)', () => {
     });
 
     it('/health (GET) - should access public health endpoint', () => {
-      return request(app.getHttpServer())
-        .get('/health')
-        .expect(200);
+      return request(app.getHttpServer()).get('/health').expect(200);
     });
   });
 
   describe('Protected Endpoints - Authentication Required', () => {
     it('/documents (GET) - should reject unauthenticated requests', () => {
-      return request(app.getHttpServer())
-        .get('/documents')
-        .expect(401);
+      return request(app.getHttpServer()).get('/documents').expect(401);
     });
 
     it('/admin/documents (GET) - should reject unauthenticated requests', () => {
-      return request(app.getHttpServer())
-        .get('/admin/documents')
-        .expect(401);
+      return request(app.getHttpServer()).get('/admin/documents').expect(401);
     });
 
     it('/query/logs (GET) - should reject unauthenticated requests', () => {
-      return request(app.getHttpServer())
-        .get('/query/logs')
-        .expect(401);
+      return request(app.getHttpServer()).get('/query/logs').expect(401);
     });
   });
 
@@ -228,8 +222,9 @@ describe('Authentication System (e2e)', () => {
 
   describe('JWT Token Validation', () => {
     it('should reject expired tokens', () => {
-      const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE2MDk0NTkyMDAsImV4cCI6MTYwOTQ1OTMwMH0.invalid';
-      
+      const expiredToken =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE2MDk0NTkyMDAsImV4cCI6MTYwOTQ1OTMwMH0.invalid';
+
       return request(app.getHttpServer())
         .get('/documents')
         .set('Authorization', `Bearer ${expiredToken}`)

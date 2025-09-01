@@ -37,7 +37,9 @@ export class ConfigurationService {
       OPENAI_EMBEDDING_MODEL: this.configService.get('OPENAI_EMBEDDING_MODEL'),
       WHISPER_MODEL: this.configService.get('WHISPER_MODEL'),
       WHISPER_LANGUAGE: this.configService.get('WHISPER_LANGUAGE'),
-      WHISPER_RESPONSE_FORMAT: this.configService.get('WHISPER_RESPONSE_FORMAT'),
+      WHISPER_RESPONSE_FORMAT: this.configService.get(
+        'WHISPER_RESPONSE_FORMAT',
+      ),
       WHISPER_TEMPERATURE: this.configService.get('WHISPER_TEMPERATURE'),
       TTS_MODEL: this.configService.get('TTS_MODEL'),
       TTS_VOICE: this.configService.get('TTS_VOICE'),

@@ -50,7 +50,7 @@ export class AppService {
     } catch (error) {
       // Check vector database even if postgres fails
       const vectorDbHealthy = await this.vectorService.healthCheck();
-      
+
       return {
         ...baseInfo,
         status: 'error',

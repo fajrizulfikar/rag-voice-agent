@@ -20,10 +20,7 @@ export class DocumentsController {
 
   @Post()
   @Roles(UserRole.USER, UserRole.ADMIN)
-  create(
-    @Body() createDocumentDto: CreateDocumentDto,
-    @GetUser() _user: User,
-  ) {
+  create(@Body() createDocumentDto: CreateDocumentDto, @GetUser() _user: User) {
     return this.documentsService.create(createDocumentDto);
   }
 

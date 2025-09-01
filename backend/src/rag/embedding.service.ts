@@ -13,11 +13,11 @@ export class EmbeddingService {
     if (!apiKey) {
       throw new Error('OpenAI API key not configured');
     }
-    
+
     this.openaiClient = new OpenAI({
       apiKey,
     });
-    
+
     // Keep using ada-002 to match the 1536 vector dimensions in Qdrant
     this.embeddingModel =
       this.configService.get<string>('openai.embeddingModel') ||
@@ -54,7 +54,7 @@ export class EmbeddingService {
     }
 
     // Filter out empty texts
-    const validTexts = texts.filter(text => text && text.trim().length > 0);
+    const validTexts = texts.filter((text) => text && text.trim().length > 0);
     if (validTexts.length === 0) {
       throw new Error('No valid texts provided for embedding generation');
     }
@@ -68,7 +68,7 @@ export class EmbeddingService {
 
       for (let i = 0; i < validTexts.length; i += batchSize) {
         const batch = validTexts.slice(i, i + batchSize);
-        
+
         const response = await this.openaiClient.embeddings.create({
           model: this.embeddingModel,
           input: batch,

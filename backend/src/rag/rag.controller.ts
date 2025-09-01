@@ -12,10 +12,7 @@ export class RagController {
 
   @Post('text')
   @Roles(UserRole.USER, UserRole.ADMIN)
-  async textQuery(
-    @Body() textQueryDto: TextQueryDto,
-    @GetUser() _user: User,
-  ) {
+  async textQuery(@Body() textQueryDto: TextQueryDto, @GetUser() _user: User) {
     return await this.ragService.processTextQuery(textQueryDto);
   }
 
