@@ -103,3 +103,6 @@ npm run lint           # Next.js ESLint
 - Query logging and analytics for admin
 
 When implementing new features, follow the established patterns: NestJS modules/controllers/services for backend, and React components with TypeScript for frontend.
+
+## Additional Instructions
+Always activate the dev-workflow-orchestrator subagent before doing any task
