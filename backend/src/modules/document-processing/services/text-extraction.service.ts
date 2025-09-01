@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SupportedFileType } from '../interfaces';
+import * as pdfParse from 'pdf-parse';
+import * as mammoth from 'mammoth';
+import * as cheerio from 'cheerio';
 
 @Injectable()
 export class TextExtractionService {
@@ -28,15 +31,26 @@ export class TextExtractionService {
   }
 
   private async extractFromPdf(file: Buffer): Promise<string> {
-    // TODO: Implement PDF text extraction using pdf-parse
-    // This will be implemented once dependencies are installed
-    throw new Error('PDF extraction not yet implemented');
+    try {
+      const data = await (pdfParse as any)(file);
+      return data.text;
+    } catch (error) {
+      this.logger.error(`Failed to extract text from PDF: ${error.message}`);
+      throw new Error(`Failed to extract text from PDF file: ${error.message}`);
+    }
   }
 
   private async extractFromDocx(file: Buffer): Promise<string> {
-    // TODO: Implement DOCX text extraction using mammoth
-    // This will be implemented once dependencies are installed
-    throw new Error('DOCX extraction not yet implemented');
+    try {
+      const result = await mammoth.extractRawText({ buffer: file });
+      if (result.messages.length > 0) {
+        this.logger.warn(`DOCX extraction warnings: ${result.messages.map(m => m.message).join(', ')}`);
+      }
+      return result.value;
+    } catch (error) {
+      this.logger.error(`Failed to extract text from DOCX: ${error.message}`);
+      throw new Error(`Failed to extract text from DOCX file: ${error.message}`);
+    }
   }
 
   private async extractFromTxt(file: Buffer): Promise<string> {
@@ -48,9 +62,22 @@ export class TextExtractionService {
   }
 
   private async extractFromHtml(file: Buffer): Promise<string> {
-    // TODO: Implement HTML text extraction using cheerio
-    // This will be implemented once dependencies are installed
-    throw new Error('HTML extraction not yet implemented');
+    try {
+      const html = file.toString('utf-8');
+      const $ = cheerio.load(html);
+      
+      // Remove script and style elements
+      $('script, style').remove();
+      
+      // Extract text content
+      const text = $('body').text() || $.text();
+      
+      // Clean up whitespace
+      return text.replace(/\s+/g, ' ').trim();
+    } catch (error) {
+      this.logger.error(`Failed to extract text from HTML: ${error.message}`);
+      throw new Error(`Failed to extract text from HTML file: ${error.message}`);
+    }
   }
 
   private async extractFromMarkdown(file: Buffer): Promise<string> {
