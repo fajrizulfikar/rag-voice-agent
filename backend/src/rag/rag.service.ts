@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { QueryLog, QueryType } from '../entities';
 import { VectorService } from './vector.service';
 import { EmbeddingService } from './embedding.service';
+import { LLMService, DocumentContext } from './llm.service';
 import { TextQueryDto, VoiceQueryDto, QueryResponse } from './dto';
 
 interface EnhancedQueryOptions {
@@ -29,6 +30,7 @@ export class RagService {
     private readonly queryLogRepository: Repository<QueryLog>,
     private readonly vectorService: VectorService,
     private readonly embeddingService: EmbeddingService,
+    private readonly llmService: LLMService,
   ) {}
 
   async processTextQuery(textQueryDto: TextQueryDto): Promise<QueryResponse> {
@@ -59,8 +61,18 @@ export class RagService {
           searchOptions,
         );
 
-      // Generate answer using retrieved context (placeholder for now)
-      const answer = await this.generateAnswer(query, similarDocuments);
+      // Generate answer using retrieved context with LLM
+      const contextDocuments: DocumentContext[] = similarDocuments.map((doc) => ({
+        id: doc.id,
+        content: doc.content || '',
+        title: doc.title,
+        score: doc.score,
+        metadata: doc.metadata,
+      }));
+
+      const answer = await this.llmService.generateAnswer(query, contextDocuments, {
+        includeSourceInfo: true,
+      });
 
       // Update query log with results
       await this.updateQueryLog(queryLog.id, {
@@ -106,17 +118,6 @@ export class RagService {
     });
   }
 
-  private async generateAnswer(
-    query: string,
-    documents: any[],
-  ): Promise<string> {
-    // Placeholder for LLM answer generation - will be implemented in Stage 2
-    if (documents.length === 0) {
-      return "I couldn't find any relevant information to answer your question. Please try rephrasing your query.";
-    }
-
-    return `Based on the available documentation, here's what I found: ${documents[0]?.title || 'relevant information'}. This is a placeholder response that will be replaced with actual LLM-generated answers in Stage 2.`;
-  }
 
   private async logQuery(data: Partial<QueryLog>): Promise<QueryLog> {
     const queryLog = this.queryLogRepository.create(data);

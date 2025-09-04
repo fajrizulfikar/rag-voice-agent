@@ -41,6 +41,15 @@ export const configurationSchema = Joi.object({
   OPENAI_API_KEY: Joi.string().required(),
   OPENAI_MODEL: Joi.string().default('gpt-3.5-turbo'),
   OPENAI_EMBEDDING_MODEL: Joi.string().default('text-embedding-ada-002'),
+  
+  // OpenAI Chat Completion Settings
+  OPENAI_MAX_TOKENS: Joi.number().integer().min(1).max(4096).default(1000),
+  OPENAI_TEMPERATURE: Joi.number().min(0).max(2).default(0.7),
+  OPENAI_SYSTEM_PROMPT: Joi.string().default('You are a helpful AI assistant that provides accurate answers based on the provided context documents.'),
+  
+  // RAG Settings
+  RAG_CONTEXT_WINDOW_SIZE: Joi.number().integer().min(1000).max(8000).default(4000),
+  RAG_MAX_CONTEXT_DOCUMENTS: Joi.number().integer().min(1).max(20).default(5),
 
   // OpenAI Speech Services (Whisper & TTS)
   WHISPER_MODEL: Joi.string().default('whisper-1'),
@@ -88,6 +97,11 @@ export interface ConfigurationVariables {
   OPENAI_API_KEY: string;
   OPENAI_MODEL: string;
   OPENAI_EMBEDDING_MODEL: string;
+  OPENAI_MAX_TOKENS: number;
+  OPENAI_TEMPERATURE: number;
+  OPENAI_SYSTEM_PROMPT: string;
+  RAG_CONTEXT_WINDOW_SIZE: number;
+  RAG_MAX_CONTEXT_DOCUMENTS: number;
   WHISPER_MODEL: string;
   WHISPER_LANGUAGE: string;
   WHISPER_RESPONSE_FORMAT: string;
