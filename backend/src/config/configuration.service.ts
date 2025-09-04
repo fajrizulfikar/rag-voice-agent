@@ -100,6 +100,10 @@ export class ConfigurationService {
       url: this.validatedConfig.QDRANT_URL,
       apiKey: this.validatedConfig.QDRANT_API_KEY,
       collectionName: this.validatedConfig.QDRANT_COLLECTION_NAME,
+      vectorSize: this.validatedConfig.QDRANT_VECTOR_SIZE,
+      distanceMetric: this.validatedConfig.QDRANT_DISTANCE_METRIC,
+      maxRetries: this.validatedConfig.QDRANT_MAX_RETRIES,
+      retryDelay: this.validatedConfig.QDRANT_RETRY_DELAY,
     };
   }
 
@@ -189,6 +193,10 @@ export class ConfigurationService {
       vectorDatabase: {
         url: this.validatedConfig.QDRANT_URL,
         collection: this.validatedConfig.QDRANT_COLLECTION_NAME,
+        vectorSize: this.validatedConfig.QDRANT_VECTOR_SIZE,
+        distanceMetric: this.validatedConfig.QDRANT_DISTANCE_METRIC,
+        maxRetries: this.validatedConfig.QDRANT_MAX_RETRIES,
+        retryDelay: this.validatedConfig.QDRANT_RETRY_DELAY,
       },
       speech: {
         provider: 'OpenAI Whisper & TTS',

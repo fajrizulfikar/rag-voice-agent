@@ -4,7 +4,6 @@ import { EmbeddingService } from './embedding.service';
 
 describe('EmbeddingService', () => {
   let service: EmbeddingService;
-  let configService: ConfigService;
 
   const mockConfigService = {
     get: jest.fn((key: string) => {
@@ -31,7 +30,6 @@ describe('EmbeddingService', () => {
     }).compile();
 
     service = module.get<EmbeddingService>(EmbeddingService);
-    configService = module.get<ConfigService>(ConfigService);
   });
 
   describe('Constructor', () => {
@@ -45,7 +43,7 @@ describe('EmbeddingService', () => {
       };
 
       expect(() => {
-        new EmbeddingService(mockConfigWithoutKey as any);
+        new EmbeddingService(mockConfigWithoutKey as unknown as ConfigService);
       }).toThrow('OpenAI API key not configured');
     });
   });
@@ -93,7 +91,10 @@ describe('EmbeddingService', () => {
 
     it('should return 1 for identical embeddings', async () => {
       const embedding = [1, 2, 3];
-      const similarity = await service.calculateSimilarity(embedding, embedding);
+      const similarity = await service.calculateSimilarity(
+        embedding,
+        embedding,
+      );
       expect(similarity).toBeCloseTo(1, 10);
     });
 

@@ -19,6 +19,12 @@ export const configurationSchema = Joi.object({
   QDRANT_URL: Joi.string().uri().required(),
   QDRANT_API_KEY: Joi.string().allow('').optional(),
   QDRANT_COLLECTION_NAME: Joi.string().default('faq_documents'),
+  QDRANT_VECTOR_SIZE: Joi.number().integer().min(1).default(1536),
+  QDRANT_DISTANCE_METRIC: Joi.string()
+    .valid('Cosine', 'Dot', 'Euclid', 'Manhattan')
+    .default('Cosine'),
+  QDRANT_MAX_RETRIES: Joi.number().integer().min(1).max(10).default(3),
+  QDRANT_RETRY_DELAY: Joi.number().integer().min(100).default(1000),
 
   // Redis
   REDIS_URL: Joi.string().uri().optional(),
@@ -68,6 +74,10 @@ export interface ConfigurationVariables {
   QDRANT_URL: string;
   QDRANT_API_KEY?: string;
   QDRANT_COLLECTION_NAME: string;
+  QDRANT_VECTOR_SIZE: number;
+  QDRANT_DISTANCE_METRIC: 'Cosine' | 'Dot' | 'Euclid' | 'Manhattan';
+  QDRANT_MAX_RETRIES: number;
+  QDRANT_RETRY_DELAY: number;
   REDIS_URL?: string;
   REDIS_HOST: string;
   REDIS_PORT: number;
