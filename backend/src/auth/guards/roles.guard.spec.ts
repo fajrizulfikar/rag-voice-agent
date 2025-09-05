@@ -45,9 +45,7 @@ describe('RolesGuard', () => {
       jest
         .spyOn(reflector, 'getAllAndOverride')
         .mockReturnValue([UserRole.ADMIN]);
-      jest
-        .spyOn(context.switchToHttp().getRequest(), 'call')
-        .mockReturnValue({});
+      (context.switchToHttp().getRequest as jest.Mock).mockReturnValue({});
 
       // Act
       const result = guard.canActivate(context);
@@ -69,9 +67,7 @@ describe('RolesGuard', () => {
       jest
         .spyOn(reflector, 'getAllAndOverride')
         .mockReturnValue([UserRole.ADMIN]);
-      jest
-        .spyOn(context.switchToHttp().getRequest(), 'call')
-        .mockReturnValue({ user: mockUser });
+      (context.switchToHttp().getRequest as jest.Mock).mockReturnValue({ user: mockUser });
 
       // Act
       const result = guard.canActivate(context);
@@ -93,9 +89,7 @@ describe('RolesGuard', () => {
       jest
         .spyOn(reflector, 'getAllAndOverride')
         .mockReturnValue([UserRole.ADMIN]);
-      jest
-        .spyOn(context.switchToHttp().getRequest(), 'call')
-        .mockReturnValue({ user: mockUser });
+      (context.switchToHttp().getRequest as jest.Mock).mockReturnValue({ user: mockUser });
 
       // Act
       const result = guard.canActivate(context);
@@ -117,9 +111,7 @@ describe('RolesGuard', () => {
       jest
         .spyOn(reflector, 'getAllAndOverride')
         .mockReturnValue([UserRole.USER, UserRole.ADMIN]);
-      jest
-        .spyOn(context.switchToHttp().getRequest(), 'call')
-        .mockReturnValue({ user: mockUser });
+      (context.switchToHttp().getRequest as jest.Mock).mockReturnValue({ user: mockUser });
 
       // Act
       const result = guard.canActivate(context);

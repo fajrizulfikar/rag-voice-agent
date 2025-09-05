@@ -70,7 +70,7 @@ export class LLMService {
     } catch (error) {
       this.logger.error('Error generating answer with OpenAI:', error);
       
-      if (error instanceof OpenAI.APIError) {
+      if (error && typeof error === 'object' && 'status' in error) {
         this.logger.error(`OpenAI API Error: ${error.status} - ${error.message}`);
         
         // Handle specific API errors

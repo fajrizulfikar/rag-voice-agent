@@ -131,11 +131,11 @@ export class VectorService implements OnModuleInit {
     queryEmbedding: number[],
     limit: number = 5,
   ): Promise<any[]> {
-    try {
-      this.logger.debug(
-        `Searching for similar documents with vector of length ${queryEmbedding.length}`,
-      );
+    this.logger.debug(
+      `Searching for similar documents with vector of length ${queryEmbedding.length}`,
+    );
 
+    return this.executeWithRetry(async () => {
       const response = await this.qdrantClient.search(this.collectionName, {
         vector: queryEmbedding,
         limit,
@@ -154,10 +154,7 @@ export class VectorService implements OnModuleInit {
         metadata: payload?.metadata,
         ...payload,
       }));
-    } catch (error) {
-      this.logger.error('Error searching similar documents', error);
-      throw error;
-    }
+    });
   }
 
   async storeDocument(

@@ -247,6 +247,7 @@ describe('VectorService', () => {
         score: 0.95,
         content: 'Document 1 content',
         metadata: { category: 'test' },
+        title: 'Document doc1',
       });
     });
 
@@ -272,7 +273,7 @@ describe('VectorService', () => {
 
     it('should throw error for enhanced document without embedding', async () => {
       const documentWithoutEmbedding = { ...testDocument };
-      delete documentWithoutEmbedding.embedding;
+      delete (documentWithoutEmbedding as any).embedding;
 
       await expect(
         service.storeDocumentEnhanced(documentWithoutEmbedding),
@@ -415,6 +416,7 @@ describe('VectorService', () => {
         score: 1.0,
         content: 'Document content',
         metadata: { category: 'test' },
+        title: 'Document doc1',
       });
     });
 
@@ -489,6 +491,9 @@ describe('VectorService', () => {
 
   describe('Error Handling and Retry Logic', () => {
     it('should retry operations on failure', async () => {
+      // Mock the private sleep method to avoid delays
+      jest.spyOn(service as any, 'sleep').mockResolvedValue(undefined);
+      
       // Mock to fail twice, then succeed
       mockQdrantClient.search
         .mockRejectedValueOnce(new Error('Network error'))
@@ -504,6 +509,9 @@ describe('VectorService', () => {
     });
 
     it('should throw error after max retries', async () => {
+      // Mock the private sleep method to avoid delays
+      jest.spyOn(service as any, 'sleep').mockResolvedValue(undefined);
+      
       mockQdrantClient.search.mockRejectedValue(new Error('Persistent error'));
 
       await expect(
