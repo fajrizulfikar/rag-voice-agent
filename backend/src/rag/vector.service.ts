@@ -15,7 +15,12 @@ interface SearchOptions {
 interface VectorDocument {
   id: string;
   content: string;
-  metadata?: Record<string, any>;
+  metadata?: {
+    title?: string;
+    category?: string;
+    tags?: string | string[];
+    [key: string]: any;
+  };
   embedding?: number[];
 }
 
@@ -359,7 +364,26 @@ export class VectorService implements OnModuleInit {
           };
 
           if (document.metadata) {
-            payload.metadata = document.metadata;
+            // Ensure metadata contains all required fields
+            const metadata = {
+              ...document.metadata,
+              title: document.metadata.title || `Document ${document.id}`,
+            };
+            
+            // Convert tags string to array if it exists
+            if (metadata.tags && typeof metadata.tags === 'string') {
+              metadata.tags = metadata.tags
+                .split(',')
+                .map((tag: string) => tag.trim())
+                .filter(Boolean);
+            }
+            
+            payload.metadata = metadata;
+            
+            // Also store title and other searchable fields at root level for easier access
+            payload.title = metadata.title;
+            payload.category = metadata.category;
+            payload.tags = metadata.tags;
           }
 
           return {
@@ -472,7 +496,26 @@ export class VectorService implements OnModuleInit {
       };
 
       if (document.metadata) {
-        payload.metadata = document.metadata;
+        // Ensure metadata contains all required fields
+        const metadata = {
+          ...document.metadata,
+          title: document.metadata.title || `Document ${document.id}`,
+        };
+        
+        // Convert tags string to array if it exists
+        if (metadata.tags && typeof metadata.tags === 'string') {
+          metadata.tags = metadata.tags
+            .split(',')
+            .map((tag: string) => tag.trim())
+            .filter(Boolean);
+        }
+        
+        payload.metadata = metadata;
+        
+        // Also store title and other searchable fields at root level for easier access
+        payload.title = metadata.title;
+        payload.category = metadata.category;
+        payload.tags = metadata.tags;
       }
 
       await this.qdrantClient.upsert(this.collectionName, {

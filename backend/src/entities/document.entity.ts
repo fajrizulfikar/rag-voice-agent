@@ -40,6 +40,8 @@ export class Document {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ type: 'text', nullable: true })
   tags: string;
 
   // Helper method to parse metadata

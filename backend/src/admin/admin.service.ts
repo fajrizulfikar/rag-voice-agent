@@ -42,12 +42,20 @@ export class AdminService {
     };
     const document = await this.documentsService.create(createDocumentDto);
 
-    // Generate embedding and store in vector database (placeholder for now)
-    const embedding = await this.embeddingService.generateEmbedding(content);
-    await this.vectorService.storeDocument(document.id, embedding, {
-      title: document.title,
-      category: document.category,
-      tags: document.tags,
+    // Store in vector database using RAG service
+    await this.ragService.uploadDocument({
+      id: document.id,
+      content: content,
+      metadata: {
+        title: document.title,
+        category: document.category,
+        tags: document.tags,
+        originalFilename: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size,
+        uploadedAt: new Date().toISOString(),
+      },
+      source: file.originalname,
     });
 
     return {
@@ -78,14 +86,17 @@ export class AdminService {
     };
     const document = await this.documentsService.create(createDocumentDto);
 
-    // Generate embedding and store in vector database
-    const embedding = await this.embeddingService.generateEmbedding(
-      uploadDocumentDto.content,
-    );
-    await this.vectorService.storeDocument(document.id, embedding, {
-      title: document.title,
-      category: document.category,
-      tags: document.tags,
+    // Store in vector database using RAG service
+    await this.ragService.uploadDocument({
+      id: document.id,
+      content: uploadDocumentDto.content,
+      metadata: {
+        title: document.title,
+        category: document.category,
+        tags: document.tags,
+        uploadedAt: new Date().toISOString(),
+      },
+      source: 'manual_text_upload',
     });
 
     return {
