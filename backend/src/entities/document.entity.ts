@@ -40,7 +40,7 @@ export class Document {
 
   @UpdateDateColumn()
   updatedAt: Date;
-  tags: any;
+  tags: string;
 
   // Helper method to parse metadata
   getParsedMetadata(): Record<string, any> {
